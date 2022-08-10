@@ -16,9 +16,11 @@ import {
 import React, { useCallback, useState } from 'react';
 import Player, { ServerPlayer } from '../../classes/Player';
 import Video from '../../classes/Video/Video';
+import { MessageType } from '../../classes/TextConversation';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
 import usePlayersInTown from '../../hooks/usePlayersInTown';
+import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useChatContext';
 import PlayerName from './PlayerName';
 
 /**
@@ -38,6 +40,7 @@ export default function PlayersInTownList(): JSX.Element {
   const players = usePlayersInTown();
   const { myPlayerID } = useCoveyAppState();
   const { currentTownFriendlyName, currentTownID } = useCoveyAppState();
+  const { setMessageTarget } = useChatContext();
   const sorted = players.concat([]);
   sorted.sort((p1, p2) =>
     p1.userName.localeCompare(p2.userName, undefined, { numeric: true, sensitivity: 'base' }),
@@ -112,7 +115,7 @@ export default function PlayersInTownList(): JSX.Element {
                   </ListItem>
                 ) : (
                   <>
-                  {!player.contacts.includes(currentPlayer) ? (
+                  {player.contacts.includes(currentPlayer) ? (
                     <ListItem key={player.id} onClick={openSettings}>
                     <p>
                       <PlayerName player={player} />
@@ -156,7 +159,7 @@ export default function PlayersInTownList(): JSX.Element {
                             mr={3}
                             value='chat'
                             name='action3'
-                            // onClick={() => processUpdates(player, 'unfollow')}
+                            onClick={() => setMessageTarget({type:MessageType.private,name:player.userName})}
                             >
                             Chat
                           </Button>
