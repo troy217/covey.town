@@ -36,8 +36,10 @@ export default class TextConversation {
    * Send a text message to this channel
    * @param message
    */
-  public sendMessage(message: string) {
+  public sendMessage(message: string, messageTarget: MessageTarget) {
+    // TODO
     const msg: ChatMessage = {
+      target: messageTarget,
       sid: nanoid(),
       body: message,
       author: this._authorName,
@@ -72,8 +74,19 @@ export default class TextConversation {
 }
 type MessageCallback = (message: ChatMessage) => void;
 export type ChatMessage = {
+  target: MessageTarget;
   author: string;
   sid: string;
   body: string;
   dateCreated: Date;
+};
+
+export enum MessageType {
+  global,
+  private,
+}
+
+export type MessageTarget = {
+  type: MessageType;
+  name: string;
 };
