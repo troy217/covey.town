@@ -14,8 +14,6 @@ type ChatContextType = {
   conversation: TextConversation | null;
   messageTarget: MessageTarget;
   setMessageTarget: (newMessageTarget: MessageTarget) => void;
-  thisPlayerName:string;
-  setThisPlayerName:(playerName:string) => void
 };
 
 export const ChatContext = createContext<ChatContextType>(null!);
@@ -29,7 +27,6 @@ export const ChatProvider: React.FC = ({ children }) => {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
 
   const [messageTarget, setMessageTarget] = useState<MessageTarget>({ type: MessageType.global, name: 'Town' });
-  const [thisPlayerName, setThisPlayerName] = useState('');
 
   useEffect(() => {
     if (conversation) {
@@ -76,8 +73,6 @@ export const ChatProvider: React.FC = ({ children }) => {
         conversation,
         messageTarget,
         setMessageTarget,
-        thisPlayerName,
-        setThisPlayerName,
       }}>
       {children}
     </ChatContext.Provider>

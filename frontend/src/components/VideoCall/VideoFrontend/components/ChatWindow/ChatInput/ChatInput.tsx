@@ -81,7 +81,7 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
   const [isTextareaFocused, setIsTextareaFocused] = useState(false);
   const video = useMaybeVideo()
 
-  const { messageTarget, setThisPlayerName } = useChatContext();
+  const { messageTarget } = useChatContext();
 
   useEffect(() => {
     if(isTextareaFocused){
@@ -112,9 +112,7 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
 
   const handleSendMessage = (message: string) => {
     if (isValidMessage) {
-      conversation.sendMessage(message.trim(), messageTarget); //TODO
-      // setThisPlayerName(message.author);
-      // console.log(messageTarget);
+      conversation.sendMessage(message.trim(), messageTarget);
       setMessageBody('');
     }
   };

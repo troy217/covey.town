@@ -9,7 +9,7 @@ export default function SwitchTab() {
   const [messageRooms, setMessageRooms] = useState<MessageTarget[]>([messageTarget]);
 
   function onUpdateMessageTarget() {
-    // If the target is new.
+    // If the target is new, create a new tab.
     if (!messageRooms.find(room => room === messageTarget)) {
       setMessageRooms([...messageRooms, messageTarget]);
     }
@@ -21,7 +21,6 @@ export default function SwitchTab() {
 
   function onSelectTab(messageRoom: MessageTarget) {
     setMessageTarget(messageRoom);
-    // console.log(messageTarget)
   }
 
   return (

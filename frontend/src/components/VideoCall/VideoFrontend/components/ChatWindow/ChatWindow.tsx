@@ -2,7 +2,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { ChatMessage, MessageType } from '../../../../../classes/TextConversation';
-import useUserProfile from '../../../../../hooks/useUserProfile';
+import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
 import ChatInput from './ChatInput/ChatInput';
 import ChatWindowHeader from './ChatWindowHeader/ChatWindowHeader';
@@ -45,14 +45,8 @@ export default function ChatWindow() {
   const classes = useStyles();
   const { isChatWindowOpen, messages, conversation } = useChatContext();
   const { messageTarget } = useChatContext();
-  // const [messagesToShow, setMessagesToShow] = useState<ChatMessage[]>(messages);
-  // const { displayName } = useMaybeUserProfile();
-
-  const myName = conversation?.author;
-
-  // useEffect(() => {
-  //   setMessagesToShow(filterMessage(messages));
-  // }, [messageTarget]);
+  const { userName } = useCoveyAppState();
+  const myName = userName;
 
   function filterMessage(messages: ChatMessage[]) {
     if (messageTarget.type === MessageType.global) {
