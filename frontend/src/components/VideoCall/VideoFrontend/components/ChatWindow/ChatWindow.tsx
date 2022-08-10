@@ -1,19 +1,22 @@
-import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import ChatWindowHeader from './ChatWindowHeader/ChatWindowHeader';
-import ChatInput from './ChatInput/ChatInput';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import MessageList from './MessageList/MessageList';
+import React from 'react';
+import { ChatMessage, MessageType } from '../../../../../classes/TextConversation';
+import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
+import ChatInput from './ChatInput/ChatInput';
+import ChatWindowHeader from './ChatWindowHeader/ChatWindowHeader';
+import MessageList from './MessageList/MessageList';
+import SwitchTab from './SwitchTab/SwitchTab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     chatWindowContainer: {
-      background: '#FFFFFF',
-      zIndex: 1000,
-      display: 'flex',
-      flexDirection: 'column',
-      borderLeft: '1px solid #E4E7E9',
+      'background': '#FFFFFF',
+      'zIndex': 1000,
+      'display': 'flex',
+      'flexDirection': 'column',
+      'borderLeft': '1px solid #E4E7E9',
       [theme.breakpoints.down('sm')]: {
         position: 'fixed',
         top: 0,
@@ -22,16 +25,16 @@ const useStyles = makeStyles((theme: Theme) =>
         right: 0,
         zIndex: 100,
       },
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      top: 0,
-      'max-width': '250px'
+      'position': 'fixed',
+      'bottom': 0,
+      'left': 0,
+      'top': 0,
+      'max-width': '250px',
     },
     hide: {
       display: 'none',
     },
-  })
+  }),
 );
 
 // In this component, we are toggling the visibility of the ChatWindow with CSS instead of
@@ -41,11 +44,30 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ChatWindow() {
   const classes = useStyles();
   const { isChatWindowOpen, messages, conversation } = useChatContext();
+  const { messageTarget } = useChatContext();
+  const { userName } = useCoveyAppState();
+  const myName = userName;
+
+  function filterMessage(messages: ChatMessage[]) {
+    if (messageTarget.type === MessageType.global) {
+      return messages.filter(message => message.target.type === MessageType.global);
+    } else {
+      return messages.filter(
+        message =>
+          message.target.type === MessageType.private &&
+          ((message.target.name === messageTarget.name && message.author == myName) ||
+            (message.target.name === myName && message.author == messageTarget.name)),
+      );
+    }
+  }
+
+  const messagesToShow = filterMessage(messages);
 
   return (
     <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen })}>
+      <SwitchTab />
       <ChatWindowHeader />
-      <MessageList messages={messages} />
+      <MessageList messages={messagesToShow} />
       <ChatInput conversation={conversation!} isChatWindowOpen={isChatWindowOpen} />
     </aside>
   );
