@@ -1,5 +1,9 @@
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import TextConversation, { ChatMessage } from '../../../../../classes/TextConversation';
+import TextConversation, {
+  ChatMessage,
+  MessageTarget,
+  MessageType,
+} from '../../../../../classes/TextConversation';
 import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
 
 type ChatContextType = {
@@ -8,6 +12,10 @@ type ChatContextType = {
   hasUnreadMessages: boolean;
   messages: ChatMessage[];
   conversation: TextConversation | null;
+  messageTarget: MessageTarget;
+  setMessageTarget: (newMessageTarget: MessageTarget) => void;
+  thisPlayerName:string;
+  setThisPlayerName:(playerName:string) => void
 };
 
 export const ChatContext = createContext<ChatContextType>(null!);
@@ -19,6 +27,9 @@ export const ChatProvider: React.FC = ({ children }) => {
   const [conversation, setConversation] = useState<TextConversation | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+
+  const [messageTarget, setMessageTarget] = useState<MessageTarget>({ type: MessageType.global, name: 'Town' });
+  const [thisPlayerName, setThisPlayerName] = useState('');
 
   useEffect(() => {
     if (conversation) {
@@ -63,6 +74,10 @@ export const ChatProvider: React.FC = ({ children }) => {
         hasUnreadMessages,
         messages,
         conversation,
+        messageTarget,
+        setMessageTarget,
+        thisPlayerName,
+        setThisPlayerName,
       }}>
       {children}
     </ChatContext.Provider>
