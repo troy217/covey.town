@@ -1,24 +1,8 @@
-import {
-  Box,
-  Button,
-  Heading,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  OrderedList,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react';
-import React, { useCallback, useState } from 'react';
-import Player, { ServerPlayer } from '../../classes/Player';
-import Video from '../../classes/Video/Video';
+import { Box, Button, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
+import React, { useReducer } from 'react';
+import Player from '../../classes/Player';
 import { MessageType } from '../../classes/TextConversation';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
-import useMaybeVideo from '../../hooks/useMaybeVideo';
 import usePlayersInTown from '../../hooks/usePlayersInTown';
 import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useChatContext';
 import PlayerName from './PlayerName';
@@ -29,31 +13,16 @@ import PlayerName from './PlayerName';
  * See relevant hooks: `usePlayersInTown` and `useCoveyAppState`
  *
  */
-/** 
-type PlayersListProp = {
-  onUpdateContacts: OnUpdateContacts;
-};
-*/
 export default function PlayersInTownList(): JSX.Element {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const video = useMaybeVideo();
   const players = usePlayersInTown();
   const { myPlayerID } = useCoveyAppState();
   const { currentTownFriendlyName, currentTownID } = useCoveyAppState();
-  const { setMessageTarget } = useChatContext();
+  const { setMessageTarget, setIsChatWindowOpen} = useChatContext();
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const sorted = players.concat([]);
   sorted.sort((p1, p2) =>
     p1.userName.localeCompare(p2.userName, undefined, { numeric: true, sensitivity: 'base' }),
   );
-  const openSettings = useCallback(() => {
-    onOpen();
-    video?.pauseGame();
-  }, [onOpen, video]);
-
-  const closeSettings = useCallback(() => {
-    onClose();
-    video?.unPauseGame();
-  }, [onClose, video]);
 
   let currentPlayer: Player;
   players.forEach(user => {
@@ -65,18 +34,19 @@ export default function PlayersInTownList(): JSX.Element {
   const processUpdates = (player: Player, action: string) => {
     sorted.forEach(user => {
       if (user.id === myPlayerID) {
-        if (action === 'follow'){
+        if (action === 'follow') {
           user.contacts.push(player);
-        } else {
+        } else if (action === 'unfollow') {
           user.contacts = user.contacts.filter(contact => contact !== player);
-        }      
+        } else {
+          setMessageTarget({ type: MessageType.private, name: player.userName });
+          setIsChatWindowOpen(true);
+        }
       }
     });
 
-    closeSettings();
+    forceUpdate();
   };
-
-
 
   return (
     <Box>
@@ -91,103 +61,48 @@ export default function PlayersInTownList(): JSX.Element {
             {myPlayerID !== player.id ? (
               <>
                 {!currentPlayer.contacts.includes(player) ? (
-                  <ListItem key={player.id} onClick={openSettings}>
+                  <ListItem key={player.id}>
                     <PlayerName player={player} />
-                    <Modal isOpen={isOpen} onClose={closeSettings}>
-                      <ModalOverlay />
-                      <ModalContent>
-                        <ModalHeader>{player.userName}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody pb={6}>
-                          <Button
-                            data-testid='followbutton'
-                            colorScheme='blue'
-                            mr={3}
-                            value='follow'
-                            name='action1'
-                            onClick={() => processUpdates(player, 'follow')}>
-                            Follow
-                          </Button>
-                          <Button onClick={closeSettings}>Cancel</Button>
-                        </ModalBody>
-                      </ModalContent>
-                    </Modal>
+                    <Button
+                      data-testid='followbutton'
+                      colorScheme='blue'
+                      mr={3}
+                      size='xs'
+                      value='follow'
+                      name='action1'
+                      onClick={() => processUpdates(player, 'follow')}>
+                      Follow
+                    </Button>
                   </ListItem>
                 ) : (
-                  <>
-                  {player.contacts.includes(currentPlayer) ? (
-                    <ListItem key={player.id} onClick={openSettings}>
-                    <p>
-                      <PlayerName player={player} />
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Followed
-                    </p>
-                    <Modal isOpen={isOpen} onClose={closeSettings}>
-                      <ModalOverlay />
-                      <ModalContent>
-                        <ModalHeader>{player.userName}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody pb={6}>
-                          <Button
-                            data-testid='unfollowbutton'
-                            colorScheme='red'
-                            mr={3}
-                            value='unfollow'
-                            name='action2'
-                            onClick={() => processUpdates(player, 'unfollow')}>
-                            Unfollow
-                          </Button>
-                          <Button onClick={closeSettings}>Cancel</Button>
-                        </ModalBody>
-                      </ModalContent>
-                    </Modal>
+                  <ListItem key={player.id}>
+                    <PlayerName player={player} />
+                    <Button
+                      data-testid='chatbutton'
+                      colorScheme='blue'
+                      mr={3}
+                      size='xs'
+                      value='chat'
+                      name='action3'
+                      onClick={() => processUpdates(player, 'chat')}>
+                      Chat
+                    </Button>
+                    <Button
+                      data-testid='unfollowbutton'
+                      colorScheme='red'
+                      mr={3}
+                      size='xs'
+                      value='unfollow'
+                      name='action2'
+                      onClick={() => processUpdates(player, 'unfollow')}>
+                      Unfollow
+                    </Button>
                   </ListItem>
-                  ):(
-                    <ListItem key={player.id} onClick={openSettings}>
-                    <p>
-                      <PlayerName player={player} />
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Followed
-                    </p>
-                    <Modal isOpen={isOpen} onClose={closeSettings}>
-                      <ModalOverlay />
-                      <ModalContent>
-                        <ModalHeader>{player.userName}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody pb={6}>
-                          <Button
-                            data-testid='chatbutton'
-                            colorScheme='blue'
-                            mr={3}
-                            value='chat'
-                            name='action3'
-                            onClick={() => setMessageTarget({type:MessageType.private,name:player.userName})}
-                            >
-                            Chat
-                          </Button>
-                          <Button
-                            data-testid='unfollowbutton'
-                            colorScheme='red'
-                            mr={3}
-                            value='unfollow'
-                            name='action2'
-                            onClick={() => processUpdates(player, 'unfollow')}>
-                            Unfollow
-                          </Button>
-                          <Button onClick={closeSettings}>Cancel</Button>
-                        </ModalBody>
-                      </ModalContent>
-                    </Modal>
-                  </ListItem>
-                  )}
-                  </>
-                  
                 )}
               </>
             ) : (
               <ListItem key={player.id}>
-                <p>
-                  <PlayerName player={player} />
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You
-                </p>
+                <PlayerName player={player} />
               </ListItem>
             )}
           </>

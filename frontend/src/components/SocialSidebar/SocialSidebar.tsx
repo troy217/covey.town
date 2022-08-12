@@ -4,22 +4,6 @@ import ConversationAreasList from './ConversationAreasList';
 import PlayersList from './PlayersList';
 
 export default function SocialSidebar(): JSX.Element {
-  /**
-  const players = usePlayersInTown();
-  const [userName] = useState<string>(Video.instance()?.userName || '');
-  
-  let currentPlayer = new Player(nanoid(), nanoid(), {x: 1, y:1, rotation:'front', moving: true});
-  players.forEach(user => {
-    if (user.userName === userName) {
-      currentPlayer = user;
-    }
-  });
-   
-  const [contacts, setContacts] = useState(currentPlayer.contacts);
-  const onUpdateContacts = (newContacts: Player[]) => {
-    setContacts(newContacts);
-  }
-  */
     return (
       <VStack align="left"
         spacing={2}
@@ -33,7 +17,6 @@ export default function SocialSidebar(): JSX.Element {
           <Heading fontSize='xl' as='h1'>Players In This Town</Heading>
         <PlayersList />
         <ConversationAreasList />
-       
       </VStack>
     );
   }
