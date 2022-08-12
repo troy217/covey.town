@@ -36,10 +36,10 @@ export default function PlayersInTownList(): JSX.Element {
       if (user.id === myPlayerID) {
         if (action === 'follow') {
           user.contacts.push(player);
-          setMessageTarget({ type: MessageType.private, name: player.userName });
         } else if (action === 'unfollow') {
           user.contacts = user.contacts.filter(contact => contact !== player);
         } else {
+          setMessageTarget({ type: MessageType.private, name: player.userName });
           setIsChatWindowOpen(true);
         }
       }
