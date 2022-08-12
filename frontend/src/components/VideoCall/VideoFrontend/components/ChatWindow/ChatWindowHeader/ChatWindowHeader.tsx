@@ -1,8 +1,7 @@
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import CloseIcon from '../../../icons/CloseIcon';
-
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
+import CloseIcon from '../../../icons/CloseIcon';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -25,16 +24,18 @@ const useStyles = makeStyles(() =>
       border: '0',
       padding: '0.4em',
     },
-  })
+  }),
 );
 
 export default function ChatWindowHeader() {
   const classes = useStyles();
   const { setIsChatWindowOpen } = useChatContext();
+  const { messageTarget } = useChatContext();
+  const chatRoomName = messageTarget.name;
 
   return (
     <div className={classes.container}>
-      <div className={classes.text}>Chat</div>
+      <div className={classes.text}>{chatRoomName}</div>
       <button className={classes.closeChatWindow} onClick={() => setIsChatWindowOpen(false)}>
         <CloseIcon />
       </button>
