@@ -11,18 +11,16 @@ export default function SwitchTab() {
 
   const handleTabsChange = (index: number) => {
     setTabIndex(index);
+    setMessageTarget(messageRooms[index]);
   };
 
   function onUpdateMessageTarget() {
     const newTabIndex = messageRooms.findIndex(
       room => room.type === messageTarget.type && room.name === messageTarget.name,
     );
-
-    // If the target is new create a new tab, else go to this tab.
     if (newTabIndex == -1) {
       setMessageRooms([...messageRooms, messageTarget]);
-      setTabIndex(messageRooms.length - 1);
-      handleTabsChange(messageRooms.length - 1);
+      handleTabsChange(0);
     } else {
       setTabIndex(newTabIndex);
     }
@@ -32,15 +30,17 @@ export default function SwitchTab() {
     onUpdateMessageTarget();
   }, [messageTarget]);
 
-  function onSelectTab(messageRoom: MessageTarget) {
-    setMessageTarget(messageRoom);
+  function onCloseTab(messageRoom: MessageTarget) {
+    setMessageRooms(messageRooms.filter(room => room.name !== messageRoom.name));
+    setMessageTarget(messageRooms[0]);
+    setTabIndex(0);
   }
 
   return (
     <Tabs index={tabIndex} onChange={handleTabsChange}>
-      <TabList>
+      <TabList overflowX='auto' overflowY='hidden'>
         {messageRooms.map((messageRoom, index) => (
-          <RoomTab key={index} room={messageRoom} onSelectTab={onSelectTab} />
+          <RoomTab key={index} room={messageRoom} onCloseTab={onCloseTab} />
         ))}
       </TabList>
     </Tabs>
