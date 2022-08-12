@@ -17,7 +17,7 @@ export default function PlayersInTownList(): JSX.Element {
   const players = usePlayersInTown();
   const { myPlayerID } = useCoveyAppState();
   const { currentTownFriendlyName, currentTownID } = useCoveyAppState();
-  const { setMessageTarget } = useChatContext();
+  const { setMessageTarget, setIsChatWindowOpen} = useChatContext();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const sorted = players.concat([]);
   sorted.sort((p1, p2) =>
@@ -36,10 +36,11 @@ export default function PlayersInTownList(): JSX.Element {
       if (user.id === myPlayerID) {
         if (action === 'follow') {
           user.contacts.push(player);
+          setMessageTarget({ type: MessageType.private, name: player.userName });
         } else if (action === 'unfollow') {
           user.contacts = user.contacts.filter(contact => contact !== player);
         } else {
-          setMessageTarget({ type: MessageType.private, name: player.userName });
+          setIsChatWindowOpen(true);
         }
       }
     });
