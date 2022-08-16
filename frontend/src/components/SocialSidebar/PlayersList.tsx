@@ -28,7 +28,6 @@ export default function PlayersInTownList(): JSX.Element {
     nanoid(),
     nanoid(),
     { moving: true, rotation: 'front', x: 0, y: 0 },
-    [],
   );
   players.forEach(user => {
     if (user.id === myPlayerID) {
