@@ -18,6 +18,7 @@ import Player, { ServerPlayer, UserLocation } from './classes/Player';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
+import { ChatConnector } from './components/VideoCall/VideoFrontend/components/ChatConnector';
 import { ChatProvider } from './components/VideoCall/VideoFrontend/components/ChatProvider';
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
 import UnsupportedBrowserWarning from './components/VideoCall/VideoFrontend/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
@@ -228,11 +229,13 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       });
       socket.on('conversationDestroyed', (_conversationArea: ServerConversationArea) => {
         const existingArea = localConversationAreas.find(a => a.label === _conversationArea.label);
-        if(existingArea){
+        if (existingArea) {
           existingArea.topic = undefined;
           existingArea.occupants = [];
         }
-        localConversationAreas = localConversationAreas.filter(a => a.label !== _conversationArea.label);
+        localConversationAreas = localConversationAreas.filter(
+          a => a.label !== _conversationArea.label,
+        );
         setConversationAreas(localConversationAreas);
         recalculateNearbyPlayers();
       });
@@ -290,15 +293,17 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
         <ChatProvider>
-          <PlayerMovementContext.Provider value={playerMovementCallbacks}>
-            <PlayersInTownContext.Provider value={playersInTown}>
-              <NearbyPlayersContext.Provider value={nearbyPlayers}>
-                <ConversationAreasContext.Provider value={conversationAreas}>
-                  {page}
-                </ConversationAreasContext.Provider>
-              </NearbyPlayersContext.Provider>
-            </PlayersInTownContext.Provider>
-          </PlayerMovementContext.Provider>
+          <ChatConnector>
+            <PlayerMovementContext.Provider value={playerMovementCallbacks}>
+              <PlayersInTownContext.Provider value={playersInTown}>
+                <NearbyPlayersContext.Provider value={nearbyPlayers}>
+                  <ConversationAreasContext.Provider value={conversationAreas}>
+                    {page}
+                  </ConversationAreasContext.Provider>
+                </NearbyPlayersContext.Provider>
+              </PlayersInTownContext.Provider>
+            </PlayerMovementContext.Provider>
+          </ChatConnector>
         </ChatProvider>
       </VideoContext.Provider>
     </CoveyAppContext.Provider>

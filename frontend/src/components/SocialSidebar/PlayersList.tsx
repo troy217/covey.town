@@ -5,7 +5,7 @@ import Player from '../../classes/Player';
 import { MessageType } from '../../classes/TextConversation';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import usePlayersInTown from '../../hooks/usePlayersInTown';
-import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useChatContext';
+import useChatConnectorContext from '../VideoCall/VideoFrontend/hooks/useChatConnectorContext/useChatConnectorContext';
 import PlayerName from './PlayerName';
 
 /**
@@ -17,18 +17,19 @@ import PlayerName from './PlayerName';
 export default function PlayersInTownList(): JSX.Element {
   const players = usePlayersInTown();
   const { myPlayerID, currentTownFriendlyName, currentTownID } = useCoveyAppState();
-  const { setMessageTarget, setIsChatWindowOpen } = useChatContext();
+  const { setMessageTarget, setIsChatWindowOpen } = useChatConnectorContext();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const sorted = players.concat([]);
   sorted.sort((p1, p2) =>
     p1.userName.localeCompare(p2.userName, undefined, { numeric: true, sensitivity: 'base' }),
   );
 
-  let currentPlayer: Player = new Player(
-    nanoid(),
-    nanoid(),
-    { moving: true, rotation: 'front', x: 0, y: 0 },
-  );
+  let currentPlayer: Player = new Player(nanoid(), nanoid(), {
+    moving: true,
+    rotation: 'front',
+    x: 0,
+    y: 0,
+  });
   players.forEach(user => {
     if (user.id === myPlayerID) {
       currentPlayer = user;
@@ -60,12 +61,12 @@ export default function PlayersInTownList(): JSX.Element {
       </Tooltip>
       <OrderedList>
         {sorted.map(player => (
-          <>
-            {myPlayerID !== player.id ? (
-              <>
-                {!currentPlayer.contacts?.includes(player) ? (
-                  <ListItem key={player.id}>
-                    <PlayerName player={player} />
+          <ListItem key={player.id}>
+            <PlayerName player={player} />
+            <>
+              {myPlayerID !== player.id ? (
+                <>
+                  {!currentPlayer.contacts?.includes(player) ? (
                     <Button
                       data-testid='followbutton'
                       colorScheme='blue'
@@ -76,39 +77,36 @@ export default function PlayersInTownList(): JSX.Element {
                       onClick={() => processUpdates(player, 'follow')}>
                       Follow
                     </Button>
-                  </ListItem>
-                ) : (
-                  <ListItem key={player.id}>
-                    <PlayerName player={player} />
-                    <Button
-                      data-testid='chatbutton'
-                      colorScheme='blue'
-                      mr={3}
-                      size='xs'
-                      value='chat'
-                      name='action3'
-                      onClick={() => processUpdates(player, 'chat')}>
-                      Chat
-                    </Button>
-                    <Button
-                      data-testid='unfollowbutton'
-                      colorScheme='red'
-                      mr={3}
-                      size='xs'
-                      value='unfollow'
-                      name='action2'
-                      onClick={() => processUpdates(player, 'unfollow')}>
-                      Unfollow
-                    </Button>
-                  </ListItem>
-                )}
-              </>
-            ) : (
-              <ListItem key={player.id}>
-                <PlayerName player={player} />
-              </ListItem>
-            )}
-          </>
+                  ) : (
+                    <>
+                      <Button
+                        data-testid='chatbutton'
+                        colorScheme='blue'
+                        mr={3}
+                        size='xs'
+                        value='chat'
+                        name='action3'
+                        onClick={() => processUpdates(player, 'chat')}>
+                        Chat
+                      </Button>
+                      <Button
+                        data-testid='unfollowbutton'
+                        colorScheme='red'
+                        mr={3}
+                        size='xs'
+                        value='unfollow'
+                        name='action2'
+                        onClick={() => processUpdates(player, 'unfollow')}>
+                        Unfollow
+                      </Button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <></>
+              )}
+            </>
+          </ListItem>
         ))}
       </OrderedList>
     </Box>
