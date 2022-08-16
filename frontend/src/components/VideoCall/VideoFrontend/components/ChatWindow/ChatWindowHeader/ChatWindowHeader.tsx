@@ -30,14 +30,20 @@ const useStyles = makeStyles(() =>
 
 export default function ChatWindowHeader() {
   const classes = useStyles();
-  const { setIsChatWindowOpen } = useChatConnectorContext();
+  const { setIsChatWindowOpenConnector } = useChatConnectorContext();
+  const {setIsChatWindowOpen} = useChatContext();
   const { messageTarget } = useChatConnectorContext();
   const chatRoomName = messageTarget.name;
+  
+  function onCloseWindow(isWindowClosed:boolean) {
+    setIsChatWindowOpenConnector(isWindowClosed);
+    setIsChatWindowOpen(isWindowClosed);
+  }
 
   return (
     <div className={classes.container}>
       <div className={classes.text}>{chatRoomName}</div>
-      <button className={classes.closeChatWindow} onClick={() => setIsChatWindowOpen(false)}>
+      <button className={classes.closeChatWindow} onClick={() => onCloseWindow(false)}>
         <CloseIcon />
       </button>
     </div>
