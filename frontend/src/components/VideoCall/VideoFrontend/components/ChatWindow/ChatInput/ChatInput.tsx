@@ -8,6 +8,8 @@ import SendMessageIcon from '../../../icons/SendMessageIcon';
 import Snackbar from '../../Snackbar/Snackbar';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import useMaybeVideo from '../../../../../../hooks/useMaybeVideo';
+import useChatContext from '../../../hooks/useChatContext/useChatContext';
+import Emoji from './Emoji';
 
 const useStyles = makeStyles(theme => ({
   chatInputContainer: {
@@ -79,6 +81,8 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
   const [isTextareaFocused, setIsTextareaFocused] = useState(false);
   const video = useMaybeVideo()
 
+  const { messageTarget } = useChatContext();
+
   useEffect(() => {
     if(isTextareaFocused){
       video?.pauseGame();
@@ -108,10 +112,14 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
 
   const handleSendMessage = (message: string) => {
     if (isValidMessage) {
-      conversation.sendMessage(message.trim());
+      conversation.sendMessage(message.trim(), messageTarget);
       setMessageBody('');
     }
   };
+
+  function addEmoji(emojiObject:string){
+    setMessageBody(messageBody.concat(emojiObject))
+  }
 
   return (
     <div className={classes.chatInputContainer}>
@@ -123,7 +131,7 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
         handleClose={() => setFileSendError(null)}
       />
       <div className={clsx(classes.textAreaContainer, { [classes.isTextareaFocused]: isTextareaFocused })}>
-        {/* 
+        {/*
         Here we add the "isTextareaFocused" class when the user is focused on the TextareaAutosize component.
         This helps to ensure a consistent appearance across all browsers. Adding padding to the TextareaAutosize
         component does not work well in Firefox. See: https://github.com/twilio/twilio-video-app-react/issues/498
@@ -142,7 +150,9 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
           onFocus={() => setIsTextareaFocused(true)}
           onBlur={() => setIsTextareaFocused(false)}
         />
+
       </div>
+      <Emoji addEmoji={addEmoji}/>
     </div>
   );
 }
