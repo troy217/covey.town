@@ -1,4 +1,5 @@
 import { Box, Button, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
+import { nanoid } from 'nanoid';
 import React, { useReducer } from 'react';
 import Player from '../../classes/Player';
 import { MessageType } from '../../classes/TextConversation';
@@ -15,16 +16,20 @@ import PlayerName from './PlayerName';
  */
 export default function PlayersInTownList(): JSX.Element {
   const players = usePlayersInTown();
-  const { myPlayerID } = useCoveyAppState();
-  const { currentTownFriendlyName, currentTownID } = useCoveyAppState();
-  const { setMessageTarget, setIsChatWindowOpen} = useChatContext();
+  const { myPlayerID, currentTownFriendlyName, currentTownID } = useCoveyAppState();
+  const { setMessageTarget, setIsChatWindowOpen } = useChatContext();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const sorted = players.concat([]);
   sorted.sort((p1, p2) =>
     p1.userName.localeCompare(p2.userName, undefined, { numeric: true, sensitivity: 'base' }),
   );
 
-  let currentPlayer: Player;
+  let currentPlayer: Player = new Player(
+    nanoid(),
+    nanoid(),
+    { moving: true, rotation: 'front', x: 0, y: 0 },
+    [],
+  );
   players.forEach(user => {
     if (user.id === myPlayerID) {
       currentPlayer = user;
@@ -44,7 +49,6 @@ export default function PlayersInTownList(): JSX.Element {
         }
       }
     });
-
     forceUpdate();
   };
 
@@ -60,7 +64,7 @@ export default function PlayersInTownList(): JSX.Element {
           <>
             {myPlayerID !== player.id ? (
               <>
-                {!currentPlayer.contacts.includes(player) ? (
+                {!currentPlayer.contacts?.includes(player) ? (
                   <ListItem key={player.id}>
                     <PlayerName player={player} />
                     <Button
