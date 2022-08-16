@@ -10,6 +10,7 @@ import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import useMaybeVideo from '../../../../../../hooks/useMaybeVideo';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import Emoji from './Emoji';
+import useChatConnectorContext from '../../../hooks/useChatConnectorContext/useChatConnectorContext';
 
 const useStyles = makeStyles(theme => ({
   chatInputContainer: {
@@ -81,7 +82,7 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
   const [isTextareaFocused, setIsTextareaFocused] = useState(false);
   const video = useMaybeVideo()
 
-  const { messageTarget } = useChatContext();
+  const { messageTarget } = useChatConnectorContext();
 
   useEffect(() => {
     if(isTextareaFocused){
