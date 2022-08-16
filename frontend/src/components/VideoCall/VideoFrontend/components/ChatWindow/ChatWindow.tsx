@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChatMessage, MessageType } from '../../../../../classes/TextConversation';
 import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
 import useChatConnectorContext from '../../hooks/useChatConnectorContext/useChatConnectorContext';
@@ -44,8 +44,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ChatWindow() {
   const classes = useStyles();
-  const { messages, conversation } = useChatContext();
-  const { messageTarget , isChatWindowOpen} = useChatConnectorContext();
+  const { messages, conversation,isChatWindowOpen, setIsChatWindowOpen } = useChatContext();
+  const { messageTarget , isChatWindowOpenConnector} = useChatConnectorContext();
   const { userName } = useCoveyAppState();
   const myName = userName;
 
@@ -61,6 +61,11 @@ export default function ChatWindow() {
       );
     }
   }
+
+  useEffect(()=> {
+    setIsChatWindowOpen(isChatWindowOpenConnector);
+  }
+  ,[isChatWindowOpenConnector])
 
   const messagesToShow = filterMessage(messages);
 
