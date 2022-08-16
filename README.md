@@ -14,7 +14,7 @@ The frontend implements video chat using the [Twilio Programmable Video](https:/
 
 A backend service (in the `services/townService` directory) implements the application logic: tracking which "towns" are available to be joined, and the state of each of those towns.
 
-##Features Updated
+## Features Updated
 
 Beyond the basic PRG style town map and conservation areas, we implemented the direct message features that will allow players to send private messages to another player. To do this, a player needs to “follow” the player intended for chatting first. The following function can be located within the players list. Players can switch who they want to chat privately with by switching the tabs above the chat window, and close any of them if they want to end chatting.
 
