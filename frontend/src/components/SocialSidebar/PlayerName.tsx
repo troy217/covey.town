@@ -6,5 +6,5 @@ type PlayerNameProps = {
 };
 export default function PlayerName({ player }: PlayerNameProps): JSX.Element {
   
-  return <>{player.userName}&nbsp;&nbsp;</>;
+  return <>{player.userName}</>;
 };

@@ -11,13 +11,12 @@ export default class Player {
 
   private _contacts: Player[];
 
-  private _listeners: ContactsListener[] = [];
 
-  constructor(id: string, userName: string, location: UserLocation, contacts: Player[]) {
+  constructor(id: string, userName: string, location: UserLocation ) {
     this._id = id;
     this._userName = userName;
     this.location = location;
-    this._contacts = contacts;
+    this._contacts = [];
 
   }
 
@@ -34,29 +33,14 @@ export default class Player {
   }
 
   set contacts(newContacts: Player[]) {
-    if(newContacts.length !== this._contacts.length || !newContacts.every((val, index) => val === this.contacts[index])){
-      this._listeners.forEach(listener => listener.onContactsChange?.(newContacts));
-      this._contacts = newContacts;
-    }
-  }
-
-  addContacts(contact: Player): void{
-    this._contacts.push(contact);
-  }
-
-  addListener(listener: ContactsListener) {
-    this._listeners.push(listener);
-  }
-
-  removeListener(listener: ContactsListener) {
-    this._listeners = this._listeners.filter(eachListener => eachListener !== listener);
+    this._contacts = newContacts;
   }
 
   static fromServerPlayer(playerFromServer: ServerPlayer): Player {
-    return new Player(playerFromServer._id, playerFromServer._userName, playerFromServer.location, playerFromServer._contactsList);
+    return new Player(playerFromServer._id, playerFromServer._userName, playerFromServer.location );
   }
 }
-export type ServerPlayer = { _id: string, _userName: string, location: UserLocation, _contactsList: Player[] };
+export type ServerPlayer = { _id: string, _userName: string, location: UserLocation };
 
 export type Direction = 'front'|'back'|'left'|'right';
 
@@ -66,8 +50,4 @@ export type UserLocation = {
   rotation: Direction,
   moving: boolean,
   conversationLabel?: string
-};
-
-export type ContactsListener = {
-  onContactsChange?: (newContacts: Player[]) => void;
 };
