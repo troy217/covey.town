@@ -10,7 +10,7 @@ import Player, { UserLocation } from '../../classes/Player';
 import { CoveyAppState } from '../../CoveyTypes';
 import * as useCoveyAppState from '../../hooks/useCoveyAppState';
 import * as usePlayersInTown from '../../hooks/usePlayersInTown';
-import { ChatProvider } from '../VideoCall/VideoFrontend/components/ChatProvider';
+import { ChatConnector } from '../VideoCall/VideoFrontend/components/ChatConnector';
 import * as PlayerName from './PlayerName';
 import PlayersList from './PlayersList';
 
@@ -24,9 +24,9 @@ describe('PlayersInTownList', () => {
   const wrappedPlayersListComponent = () => (
     <ChakraProvider>
       <React.StrictMode>
-        <ChatProvider>
+        <ChatConnector>
           <PlayersList />
-        </ChatProvider>
+        </ChatConnector>
       </React.StrictMode>
     </ChakraProvider>
   );

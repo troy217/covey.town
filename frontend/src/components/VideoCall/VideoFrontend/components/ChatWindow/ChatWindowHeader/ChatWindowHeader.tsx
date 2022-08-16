@@ -1,5 +1,6 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import React from 'react';
+import useChatConnectorContext from '../../../hooks/useChatConnectorContext/useChatConnectorContext';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import CloseIcon from '../../../icons/CloseIcon';
 
@@ -29,8 +30,8 @@ const useStyles = makeStyles(() =>
 
 export default function ChatWindowHeader() {
   const classes = useStyles();
-  const { setIsChatWindowOpen } = useChatContext();
-  const { messageTarget } = useChatContext();
+  const { setIsChatWindowOpen } = useChatConnectorContext();
+  const { messageTarget } = useChatConnectorContext();
   const chatRoomName = messageTarget.name;
 
   return (

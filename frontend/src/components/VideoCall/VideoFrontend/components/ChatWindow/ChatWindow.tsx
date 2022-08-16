@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { ChatMessage, MessageType } from '../../../../../classes/TextConversation';
 import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
+import useChatConnectorContext from '../../hooks/useChatConnectorContext/useChatConnectorContext';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
 import ChatInput from './ChatInput/ChatInput';
 import ChatWindowHeader from './ChatWindowHeader/ChatWindowHeader';
@@ -43,8 +44,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ChatWindow() {
   const classes = useStyles();
-  const { isChatWindowOpen, messages, conversation } = useChatContext();
-  const { messageTarget } = useChatContext();
+  const { messages, conversation } = useChatContext();
+  const { messageTarget , isChatWindowOpen} = useChatConnectorContext();
   const { userName } = useCoveyAppState();
   const myName = userName;
 

@@ -1,11 +1,12 @@
 import { TabList, Tabs } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { MessageTarget } from '../../../../../../classes/TextConversation';
+import useChatConnectorContext from '../../../hooks/useChatConnectorContext/useChatConnectorContext';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import RoomTab from './RoomTab';
 
 export default function SwitchTab() {
-  const { messageTarget, setMessageTarget } = useChatContext();
+  const { messageTarget, setMessageTarget } = useChatConnectorContext();
   const [messageRooms, setMessageRooms] = useState<MessageTarget[]>([messageTarget]);
   const [tabIndex, setTabIndex] = useState<number>(0);
 
